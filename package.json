@@ -1,6 +1,6 @@
 {
   "name": "@alisdev/router-api-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Decorator-based controller library for Node.js APIs with Express/Fastify support, Zod validation, Swagger UI, and structured exception handling",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

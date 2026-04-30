@@ -113,6 +113,25 @@ export class RouterKit {
   }
 
   /**
+   * Registers a global catch-all handler for 404 Not Found errors.
+   * Call this AFTER all routes and controllers have been registered.
+   */
+  static handleNotFound(): void {
+    if (!RouterKit.isSetup || !RouterKit.adapter) {
+      throw new Error(`[RouterKit] RouterKit.setup() must be called first.`);
+    }
+
+    RouterKit.adapter.registerNotFoundHandler((req: unknown, res: unknown) => {
+      RouterKit.adapter!.sendResponse(res, 404, {
+        message: "Path not found",
+        data: null,
+      });
+    });
+
+    console.log(`✅ Registered global Not Found handler`);
+  }
+
+  /**
    * Resets the RouterKit state. Useful for testing.
    * @internal
    */

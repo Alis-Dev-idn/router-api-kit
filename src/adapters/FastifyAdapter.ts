@@ -28,6 +28,7 @@ interface FastifyApp {
   patch(path: string, options: Record<string, unknown>, handler: unknown): void;
   delete(path: string, options: Record<string, unknown>, handler: unknown): void;
   addHook(name: string, hook: unknown): void;
+  setNotFoundHandler(handler: unknown): void;
 }
 
 /**
@@ -123,5 +124,15 @@ export class FastifyAdapter extends BaseAdapter {
   sendResponse(res: unknown, status: number, body: unknown): void {
     const fastifyReply = res as FastifyReply;
     fastifyReply.code(status).send(body);
+  }
+
+  registerNotFoundHandler(handler: (req: unknown, res: unknown) => void): void {
+    if (typeof this.app.setNotFoundHandler === "function") {
+      this.app.setNotFoundHandler((request: unknown, reply: unknown) => {
+        handler(request, reply);
+      });
+    } else {
+      console.warn("[RouterKit] Fastify instance is missing setNotFoundHandler. Catch-all route not registered.");
+    }
   }
 }

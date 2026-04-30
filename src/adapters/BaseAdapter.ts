@@ -46,4 +46,7 @@ export abstract class BaseAdapter {
 
   /** Sends a JSON response */
   abstract sendResponse(res: unknown, status: number, body: unknown): void;
+
+  /** Registers a catch-all handler for 404 Not Found routes */
+  abstract registerNotFoundHandler(handler: (req: unknown, res: unknown) => void): void;
 }

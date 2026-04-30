@@ -90,4 +90,10 @@ export class ExpressAdapter extends BaseAdapter {
     const expressRes = res as ExpressResponse;
     expressRes.status(status).json(body);
   }
+
+  registerNotFoundHandler(handler: (req: unknown, res: unknown) => void): void {
+    this.app.use("*", (req: unknown, res: unknown) => {
+      handler(req, res);
+    });
+  }
 }

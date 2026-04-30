@@ -76,6 +76,7 @@ Central setup class. Configured once at application entry point.
 ```typescript
 RouterKit.setup(config: RouterKitConfig): void
 RouterKit.register(...controllers: Class[]): void
+RouterKit.handleNotFound(): void
 ```
 
 **Configuration:**
@@ -308,6 +309,9 @@ RouterKit.setup({
 
 // Register multiple controllers at once
 RouterKit.register(AuthController, UserController);
+
+// Optionally handle 404 Not Found for unregistered routes
+RouterKit.handleNotFound();
 
 app.listen(3000, () => console.log("Server running on port 3000"));
 ```
