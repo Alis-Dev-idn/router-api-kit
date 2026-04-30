@@ -121,7 +121,7 @@ export class RouterKit {
       throw new Error(`[RouterKit] RouterKit.setup() must be called first.`);
     }
 
-    RouterKit.adapter.registerNotFoundHandler((req: unknown, res: unknown) => {
+    RouterKit.adapter.registerNotFoundHandler((_req: unknown, res: unknown) => {
       RouterKit.adapter!.sendResponse(res, 404, {
         message: "Path not found",
         data: null,
