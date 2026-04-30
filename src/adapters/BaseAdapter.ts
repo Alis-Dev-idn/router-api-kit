@@ -44,6 +44,12 @@ export abstract class BaseAdapter {
   /** Deletes a cookie from the response */
   abstract deleteCookie(res: unknown, key: string): void;
 
+  /** Extracts the request URL path */
+  abstract getUrl(req: unknown): string;
+
+  /** Extracts the request HTTP method */
+  abstract getMethod(req: unknown): string;
+
   /** Sends a JSON response */
   abstract sendResponse(res: unknown, status: number, body: unknown): void;
 

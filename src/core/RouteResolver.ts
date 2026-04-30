@@ -15,6 +15,7 @@ import { CookieSetter } from "../cookie/CookieSetter.js";
 import { BaseException } from "../exceptions/BaseException.js";
 import { BadRequestException } from "../exceptions/BadRequestException.js";
 import { ServerErrorException } from "../exceptions/ServerErrorException.js";
+import { Logger } from "./Logger.js";
 
 /**
  * Internal class that reads decorator metadata and registers routes on the framework adapter.
@@ -29,6 +30,7 @@ export class RouteResolver {
 
   constructor(
     private readonly adapter: BaseAdapter,
+    private readonly loggerConfig?: boolean | import("../types/index.js").LoggerConfig,
     private readonly authMiddleware?: MiddlewareFn,
     private readonly refreshMiddleware?: MiddlewareFn
   ) {}
@@ -126,7 +128,7 @@ export class RouteResolver {
     this.resolvedRoutes.push(resolvedRoute);
 
     // Create the route handler
-    const handler = this.createHandler(instance, route.propertyKey, params, statusCode);
+    const handler = this.createHandler(instance, route.propertyKey, params, statusCode, route.method);
 
     // Register on the adapter
     this.adapter.registerRoute(route.method, fullPath, allMiddlewares, handler);
@@ -182,11 +184,14 @@ export class RouteResolver {
     instance: unknown,
     propertyKey: string,
     params: ParamMetadata[],
-    statusCode: number
+    statusCode: number,
+    routeMethod: string
   ): (req: unknown, res: unknown) => void {
     const adapter = this.adapter;
+    const loggerConfig = this.loggerConfig;
 
     return async (req: unknown, res: unknown) => {
+      const start = Date.now();
       try {
         // Resolve parameter values
         const args = this.resolveParams(params, req, res);
@@ -200,8 +205,22 @@ export class RouteResolver {
           message: "OK",
           data: result ?? null,
         });
+
+        if (loggerConfig && (loggerConfig === true || (typeof loggerConfig === 'object' && loggerConfig.enabled !== false))) {
+          const duration = Date.now() - start;
+          const url = adapter.getUrl(req);
+          const handler = typeof loggerConfig === 'object' ? loggerConfig.handler : undefined;
+          Logger.logRequest(routeMethod, url, statusCode, duration, undefined, handler);
+        }
       } catch (error: unknown) {
-        this.handleError(error, res);
+        const status = this.handleError(error, res);
+        
+        if (loggerConfig && (loggerConfig === true || (typeof loggerConfig === 'object' && loggerConfig.enabled !== false))) {
+          const duration = Date.now() - start;
+          const url = adapter.getUrl(req);
+          const handler = typeof loggerConfig === 'object' ? loggerConfig.handler : undefined;
+          Logger.logRequest(routeMethod, url, status, duration, error, handler);
+        }
       }
     };
   }
@@ -286,13 +305,13 @@ export class RouteResolver {
    * BaseException instances are sent with their status code.
    * Unknown errors are wrapped as ServerErrorException.
    */
-  private handleError(error: unknown, res: unknown): void {
+  private handleError(error: unknown, res: unknown): number {
     if (error instanceof BaseException) {
       this.adapter.sendResponse(res, error.status, {
         message: error.message,
         data: error.data,
       });
-      return;
+      return error.status;
     }
 
     // Wrap unknown errors as ServerErrorException
@@ -303,5 +322,6 @@ export class RouteResolver {
       message: serverError.message,
       data: serverError.data,
     });
+    return serverError.status;
   }
 }

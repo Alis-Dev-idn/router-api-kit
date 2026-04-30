@@ -58,6 +58,14 @@ export interface SwaggerConfig {
   searchByTag?: boolean;
 }
 
+/** Logger configuration */
+export interface LoggerConfig {
+  /** Enable request logging (default: false) */
+  enabled?: boolean;
+  /** Custom handler to receive log data (useful for saving to file or external services) */
+  handler?: (level: "info" | "error", message: string, meta: { method: string; path: string; status: number; durationMs: number; error?: unknown }) => void;
+}
+
 /** Main RouterKit configuration */
 export interface RouterKitConfig {
   /** The framework being used */
@@ -70,6 +78,8 @@ export interface RouterKitConfig {
   refreshMiddleware?: MiddlewareFn;
   /** Swagger UI configuration */
   swagger?: SwaggerConfig;
+  /** Logger configuration */
+  logger?: boolean | LoggerConfig;
 }
 
 // ── Decorator Option Types ────────────────────────────────────────

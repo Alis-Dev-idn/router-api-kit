@@ -97,6 +97,10 @@ interface RouterKitConfig {
     searchByMethod?: boolean;
     searchByTag?: boolean;
   };
+  logger?: boolean | {
+    enabled?: boolean;
+    handler?: (level: "info" | "error", message: string, meta: any) => void;
+  };
 }
 ```
 

@@ -4,6 +4,7 @@ import { ExpressAdapter } from "../adapters/ExpressAdapter.js";
 import { FastifyAdapter } from "../adapters/FastifyAdapter.js";
 import type { BaseAdapter } from "../adapters/BaseAdapter.js";
 import { RouteResolver } from "./RouteResolver.js";
+import { Logger } from "./Logger.js";
 import { SwaggerGenerator } from "../swagger/SwaggerGenerator.js";
 import { SwaggerUI } from "../swagger/SwaggerUI.js";
 
@@ -66,7 +67,12 @@ export class RouterKit {
     }
 
     RouterKit.config = config;
-    RouterKit.resolver = new RouteResolver(RouterKit.adapter, config.authMiddleware, config.refreshMiddleware);
+    RouterKit.resolver = new RouteResolver(
+      RouterKit.adapter,
+      config.logger,
+      config.authMiddleware,
+      config.refreshMiddleware
+    );
     RouterKit.isSetup = true;
 
     console.log(`🚀 RouterKit initialized with ${config.framework} adapter`);
@@ -122,10 +128,20 @@ export class RouterKit {
     }
 
     RouterKit.adapter.registerNotFoundHandler((_req: unknown, res: unknown) => {
+      const start = Date.now();
       RouterKit.adapter!.sendResponse(res, 404, {
         message: "Path not found",
         data: null,
       });
+
+      const config = RouterKit.config;
+      if (config?.logger && (config.logger === true || (typeof config.logger === 'object' && config.logger.enabled !== false))) {
+        const duration = Date.now() - start;
+        const method = RouterKit.adapter!.getMethod(_req);
+        const url = RouterKit.adapter!.getUrl(_req);
+        const handler = typeof config.logger === 'object' ? config.logger.handler : undefined;
+        Logger.logRequest(method, url, 404, duration, undefined, handler);
+      }
     });
 
     console.log(`✅ Registered global Not Found handler`);

@@ -121,6 +121,16 @@ export class FastifyAdapter extends BaseAdapter {
     }
   }
 
+  getUrl(req: unknown): string {
+    const r = req as { raw?: { url?: string }; url?: string };
+    return r.raw?.url || r.url || "";
+  }
+
+  getMethod(req: unknown): string {
+    const r = req as { raw?: { method?: string }; method?: string };
+    return r.raw?.method || r.method || "UNKNOWN";
+  }
+
   sendResponse(res: unknown, status: number, body: unknown): void {
     const fastifyReply = res as FastifyReply;
     fastifyReply.code(status).send(body);

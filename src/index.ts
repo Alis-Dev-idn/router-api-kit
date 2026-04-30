@@ -41,6 +41,7 @@ export type {
   Class,
   CookieOptions,
   SwaggerConfig,
+  LoggerConfig,
   RouterKitConfig,
   ControllerOptions,
   MappingOptions,

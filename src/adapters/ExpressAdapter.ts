@@ -86,6 +86,15 @@ export class ExpressAdapter extends BaseAdapter {
     expressRes.clearCookie(key, { path: "/" });
   }
 
+  getUrl(req: unknown): string {
+    const r = req as { originalUrl?: string; url?: string };
+    return r.originalUrl || r.url || "";
+  }
+
+  getMethod(req: unknown): string {
+    return (req as { method?: string }).method || "UNKNOWN";
+  }
+
   sendResponse(res: unknown, status: number, body: unknown): void {
     const expressRes = res as ExpressResponse;
     expressRes.status(status).json(body);
