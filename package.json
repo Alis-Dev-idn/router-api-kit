@@ -1,0 +1,74 @@
+{
+  "name": "@alisdev/router-api-kit",
+  "version": "1.0.0",
+  "description": "Decorator-based controller library for Node.js APIs with Express/Fastify support, Zod validation, Swagger UI, and structured exception handling",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "router",
+    "controller",
+    "decorator",
+    "express",
+    "fastify",
+    "typescript",
+    "api",
+    "zod",
+    "swagger",
+    "openapi",
+    "rest",
+    "validation"
+  ],
+  "author": "alisdev",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "reflect-metadata": "^0.2.2",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^3.24.4"
+  },
+  "peerDependencies": {
+    "express": "^4.x || ^5.x",
+    "fastify": "^4.x || ^5.x"
+  },
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    },
+    "fastify": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.15.3",
+    "@types/swagger-ui-express": "^4.1.8",
+    "express": "^5.1.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alis-Dev-idn/router-api-kit.git"
+  }
+}
