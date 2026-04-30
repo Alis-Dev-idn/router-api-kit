@@ -117,7 +117,7 @@ export class RouteResolver {
       fullPath,
       middlewares: allMiddlewares,
       params,
-      handler: (instance as Record<string, Function>)[route.propertyKey],
+      handler: (instance as Record<string, (...args: unknown[]) => unknown>)[route.propertyKey],
       statusCode,
       controllerTag: controllerMeta.tag,
       swagger: swaggerVisible,
@@ -192,7 +192,7 @@ export class RouteResolver {
         const args = this.resolveParams(params, req, res);
 
         // Call the controller method
-        const method = (instance as Record<string, Function>)[propertyKey];
+        const method = (instance as Record<string, (...args: unknown[]) => unknown>)[propertyKey];
         const result = await method.apply(instance, args);
 
         // Wrap and send response
